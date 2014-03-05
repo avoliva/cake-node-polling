@@ -1,18 +1,18 @@
-CakePHP With Socket.IO Example
+## CakePHP With Socket.IO Example
 =======================
 
-## REQUIREMENTS
+### REQUIREMENTS
 * MySQL
 * NodeJS
 
 
 
-## Install Directions
+### Install Directions
 	npm install socket.io mysql 
 	node server.js (server.js is located in root)
 
 
-## Execute this SQL
+### Execute this SQL
 	CREATE TABLE events (
 		id int auto_increment primary key,
 		scheduled_date datetime,
@@ -20,7 +20,7 @@ CakePHP With Socket.IO Example
 	)
 
 
-## License
+### License
 Unless otherwise noted, all files contained within this project are liensed
 under the MIT opensource license. See the included file LICENSE or visit
 [opensource.org][] for more information.
