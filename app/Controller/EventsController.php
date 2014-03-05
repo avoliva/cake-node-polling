@@ -28,8 +28,10 @@ class EventsController extends AppController {
 		$now = date('Y-m-d H:i:s', time());
 		$previousDay = date('Y-m-d H:i:s', strtotime('-1 day', time()));
 		$this->Paginator->settings = array('conditions' => 
-			array('Event.scheduled_date BETWEEN ? AND ?' => array($previousDay, $now)),
-			'limit' => '2');
+			array('Event.scheduled_date BETWEEN ? AND ?' => 
+				array('DATE_SUB(CURDATE(), INTERVAL 1 DAY)', 'NOW()')),
+			'limit' => '2',
+			'order' => array('Event.id ASC'));
 		$this->set('events', $this->Paginator->paginate());
 	}
 
