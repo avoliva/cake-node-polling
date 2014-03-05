@@ -1,7 +1,5 @@
 
-var app                 = require('http').createServer(handler),
-    io                  = require('socket.io').listen(app),
-    fs                  = require('fs'),
+var io                  = require('socket.io').listen(8081),
     mysql               = require('mysql'),
     connectionsArray    = [],
     connection          = mysql.createConnection({
@@ -20,21 +18,6 @@ connection.connect(function(err) {
   console.log( err );
 });
 
-// create a new nodejs server ( localhost:8000 )
-app.listen(8000);
-
-// on server ready we can load our client.html page
-function handler ( req, res ) {
-    fs.readFile( __dirname + '/client.html' , function ( err, data ) {
-        if ( err ) {
-            console.log( err );
-            res.writeHead(500);
-            return res.end( 'Error loading client.html' );
-        }
-        res.writeHead( 200 );
-        res.end( data );
-    });
-}
 
 /*
 *
@@ -46,8 +29,8 @@ function handler ( req, res ) {
 var pollingLoop = function () {
    
     // Make the database query
-    var query = connection.query('SELECT * FROM events'),
-        users = []; // this array will contain the result of our db query
+    var query = connection.query('SELECT * FROM events WHERE events.scheduled_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND NOW()'),
+        dat = []; // this array will contain the result of our db query
 
 
     // set up the query listeners
@@ -60,14 +43,14 @@ var pollingLoop = function () {
     })
     .on('result', function( user ) {
         // it fills our array looping on each user row inside the db
-        users.push( user );
+        dat.push( user );
     })
     .on('end',function(){
         // loop on itself only if there are sockets still connected
         if(connectionsArray.length) {
             pollingTimer = setTimeout( pollingLoop, POLLING_INTERVAL );
 
-            updateSockets({users:users});
+            updateSockets({dat:dat});
         }
     });
 
