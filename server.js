@@ -1,4 +1,3 @@
-
 var io                  = require('socket.io').listen(8081),
     mysql               = require('mysql'),
     connectionsArray    = [],
@@ -29,7 +28,7 @@ connection.connect(function(err) {
 var pollingLoop = function () {
    
     // Make the database query
-    var query = connection.query('SELECT * FROM events WHERE events.scheduled_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND NOW()'),
+    var query = connection.query('SELECT * FROM events WHERE events.scheduled_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND NOW() ORDER BY ID ASC'),
         dat = []; // this array will contain the result of our db query
 
 
