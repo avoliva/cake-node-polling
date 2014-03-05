@@ -46,7 +46,7 @@ function handler ( req, res ) {
 var pollingLoop = function () {
    
     // Make the database query
-    var query = connection.query('SELECT * FROM musics'),
+    var query = connection.query('SELECT * FROM events'),
         users = []; // this array will contain the result of our db query
 
 
