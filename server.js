@@ -28,7 +28,7 @@ connection.connect(function(err) {
 var pollingLoop = function () {
    
     // Make the database query
-    var query = connection.query('SELECT * FROM events WHERE events.scheduled_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND NOW() ORDER BY ID ASC'),
+    var query = connection.query('SELECT * FROM events WHERE events.scheduled_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND NOW() ORDER BY id ASC'),
         dat = []; // this array will contain the result of our db query
 
 

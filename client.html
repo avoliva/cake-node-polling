@@ -1,26 +1,27 @@
 <html>
     <head>
-    [ ... ]
+    [ … ]
     <body>
         <time></time>
-        <div id="container">Loading ...</div>
+        <div id="container">Loading …</div>
     <script src="socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
     <script>
 
         // create a new websocket
-        var socket = io.connect('http://localhost:8000');
+        var socket = io.connect(‘http://localhost:8000′);
         // on message received we print all the data inside the #container div
-        socket.on('notification', function (data) {
+        socket.on(‘notification’, function (data) {
         var usersList = "<dl>";
         $.each(data.users,function(index,user){
-            usersList += "<dt>" + user.singer_name + "</dt>\n" +
-                         "<dd>" + user.time_added + "</dd>";
+            usersList += "<dt>" + user.user_name + "</dt>\n" +
+                         "<dd>" + user.user_description + "\n" +
+                         "</dd>";
         });
         usersList += "</dl>";
-        $('#container').html(usersList);
+        $(‘#container’).html(usersList);
    
-        $('time').html('Last Update:' + data.time);
+        $(‘time’).html(‘Last Update:’ + data.time);
       });
     </script>
     </body>

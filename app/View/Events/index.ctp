@@ -1,35 +1,66 @@
-<?php
-var current_url = "<?php echo $this->here; ?>";
-$websocket = new WebSocket(array('port' => 8081, 'scheme' => 'ws'));
 
+<?php
+$websocket = new WebSocket(array('port' => 8081, 'scheme' => 'ws', 'persistent' => true));
 if($websocket->connect()) {
 
-    $data = $websocket->read();
-    $payload = json_decode(substr($data['payload'], 4));
-    $payload = $payload->args[0]->dat;
-    if (isset($payload[0])): ?>
-    	<script>
-    	var data = $.parseJSON('<?php echo json_encode($payload); ?>');
-    	if (app_path.indexOf('page:') != -1) {
-	    var page = current_url[current_url.length-1];
-	    // page-1 + 10 are the indices we want
-	    // change the data variable to hold only those indices
-	    	
-	} else {
-	   // else change the data variable to only contain the first 10
-	}
-    	var eventsList = "";
-    	// loop over the data obj like normal and create the table
-	$.each(data,function(index,events){
-	    eventsList += "<tr>\n"
-	    eventsList += "\t<td>" + events.name + "&nbsp;</td>\n";
-	    eventsList += "\t<td>" + events.scheduled_date = "&nbsp;</td>\n";
-	    eventsList += "</tr>\n";
-	});
-	if (eventsList !== "") {
-	    $('tbody').html(eventsList);
-	}    
-    	</script>
+	$data = $websocket->read(65535);
+	// print_r($data);
+	$payload = json_decode(substr($data['payload'], 4));
+	// var_dump($payload);
+	$payload = $payload->args[0]->dat;
+	 debug($websocket->emit('notification'));
+	if (isset($payload[0])): ?>
+		<script src="http://localhost:8081/socket.io/socket.io.js"></script>
+		<script>
+		var socket = io.connect('http://localhost:8081');
+        // on message received we print all the data inside the #container div
+        socket.on('notification', function (data) {
+			var current_url = "<?php echo $this->here; ?>";
+			var data = data;
+			console.log(data.dat[0]);
+			var newArray = [];
+			var limit= 5;
+			if (current_url.indexOf('page:') != -1) {
+				var page = current_url[current_url.length-1] - 1;
+				// page is 2
+				// we want 6-10
+				// page is 1 once subtracted
+				// page * limit
+				//--
+				//page is 1
+				// page + 5 is 6; 
+				for (var i = page*limit; i < (page*limit+5); ++i) {
+					if (data.dat[i] === void 0) break;
+					newArray.push(data.dat[i]);
+				}
+				// console.log(newArray);
+				// page-1 + 10 are the indices we want
+				// change the data variable to hold only those indices
+				
+			} else {
+				for (var i = 0; i < limit; ++i) {
+					if (data.dat[i] === void 0) break;
+					newArray.push(data.dat[i]);
+				}
+			
+				// else change the data variable to only contain the first 10
+			}
+			var eventsList = "";
+				// loop over the data obj like normal and create the table
+			$.each(newArray,function(index,events){
+				console.log
+				eventsList += "<tr>\n"
+				eventsList += "\t<td>" + events.name + "&nbsp;</td>\n";
+				eventsList += "\t<td>" + events.scheduled_date + "&nbsp;</td>\n";
+				eventsList += "</tr>\n";
+			});
+			if (eventsList !== "") {
+				// console.log(eventsList);
+				// console.log('made it');
+				$('.real').html(eventsList);
+			}    
+		})
+		</script>
 
  <? endif; 
 }
@@ -40,18 +71,12 @@ if($websocket->connect()) {
 	<tr>
 			<th><?php echo $this->Paginator->sort('name'); ?></th>
 			<th><?php echo $this->Paginator->sort('scheduled_date'); ?></th>
-			<th class="actions"><?php echo __('Actions'); ?></th>
 	</tr>
-	<tbody>
+	<tbody class="real">
 	<?php foreach ($events as $event): ?>
 		<tr>
 			<td><?php echo h($event['Event']['name']); ?>&nbsp;</td>
 			<td><?php echo h($event['Event']['scheduled_date']); ?>&nbsp;</td>
-			<td class="actions">
-				<?php echo $this->Html->link(__('View'), array('action' => 'view', $event['Event']['id'])); ?>
-				<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $event['Event']['id'])); ?>
-				<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $event['Event']['id']), null, __('Are you sure you want to delete # %s?', $event['Event']['id'])); ?>
-			</td>
 		</tr>
 	<?php endforeach; ?>
 	</tbody>

@@ -1,7 +1,7 @@
 <?php
 App::uses('AppController', 'Controller');
 App::import('Plugin/WebSocket/Lib/Network/Http', 'WebSocket', array('file'=>'WebSocket.php'));
-$websocket = new WebSocket(array('port' => 8080, 'scheme'=>'ws'));
+$websocket = new WebSocket(array('port' => 8081, 'scheme'=>'ws', 'persistent' => true));
 /**
  * Events Controller
  *
@@ -28,9 +28,8 @@ class EventsController extends AppController {
 		$now = date('Y-m-d H:i:s', time());
 		$previousDay = date('Y-m-d H:i:s', strtotime('-1 day', time()));
 		$this->Paginator->settings = array('conditions' => 
-			array('Event.scheduled_date BETWEEN ? AND ?' => 
-				array('DATE_SUB(CURDATE(), INTERVAL 1 DAY)', 'NOW()')),
-			'limit' => '2',
+			array('Event.scheduled_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND NOW()'),
+			'limit' => '5',
 			'order' => array('Event.id ASC'));
 		$this->set('events', $this->Paginator->paginate());
 	}
